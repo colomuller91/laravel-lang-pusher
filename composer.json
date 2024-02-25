@@ -1,5 +1,5 @@
 {
-  "name": "colomuller91/lang-pusher",
+  "name": "colomuller91/laravel-lang-pusher",
   "description": "Adds a command for push new translations for Laravel",
   "minimum-stability": "dev",
   "prefer-stable": true,
