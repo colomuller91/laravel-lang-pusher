@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Colomuller91\LaravelLangPusher\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Console\Concerns\PromptsForMissingInput;
