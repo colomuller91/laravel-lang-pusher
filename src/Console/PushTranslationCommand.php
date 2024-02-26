@@ -48,24 +48,32 @@ class PushTranslationCommand extends Command
      */
     public function handle()
     {
+        $this->disk = Storage::build([
+            'root' => lang_path(),
+            'driver' => 'local'
+        ]);
+
+        $langs = $this->disk->directories();
+
+        if (!count($langs)) {
+            $this->error('We can\'t find languages, did you ran artisan lang:publish before or register your languages?');
+            die();
+        }
+
         if (!$this->argument('full-key')) {
-            $this->fullKey = $this->askPersistently('Provide translation full key (ex: passwords.reset)');
+            $this->fullKey = $this->ask('Provide translation full key (ex: passwords.reset)');
             if (!str_contains($this->fullKey,'.')) {
                 $this->error('Provided translation key is invalid');
                 die();
             }
         }
 
+        $languages = $this->choice(
+            'Chose in what language you want to add this key and translation', array_merge($langs, ['ALL']));
 
-        $this->disk = Storage::disk('lang_resources');
-        $res = $this->disk->directories();
-
-        $languages = $this->choice('Chose in what language you want to add this key and translation',
-            array_merge($res, ['ALL']), null, null, true);
-
-        if (array_search('ALL', $languages) !== false) {
-            $languages = $res;
-        }
+//        if (array_search('ALL', $languages) !== false) {
+//            $languages = $res;
+//        }
 
         foreach ($languages as $lang) {
 
@@ -87,7 +95,7 @@ class PushTranslationCommand extends Command
 
                         $this->setIndexRecursive(
                             $fileData,
-                            $this->askPersistently($this->getTranslationQuestion($lang)),
+                            $this->ask($this->getTranslationQuestion($lang)),
                             $keys
                         );
                     }
@@ -96,7 +104,7 @@ class PushTranslationCommand extends Command
                     if ($this->confirm("[$file] Translation value found before check all indexes: {$result["key"]} => {$result["value"]}".PHP_EOL." Overwrite?", 'y')){
                         $this->setIndexRecursive(
                             $fileData,
-                            $this->askPersistently($this->getTranslationQuestion($lang)),
+                            $this->ask($this->getTranslationQuestion($lang)),
                             $keys
                         );
                     }
@@ -105,7 +113,7 @@ class PushTranslationCommand extends Command
                     if ($this->confirm("[$file] Given index \"{$result["key"]}\" is pointing to an array with keys like: {$result["value"]}".PHP_EOL." Overwrite?", 'y')){
                         $this->setIndexRecursive(
                             $fileData,
-                            $this->askPersistently($this->getTranslationQuestion($lang)),
+                            $this->ask($this->getTranslationQuestion($lang)),
                             $keys
                         );
                     }
@@ -114,7 +122,7 @@ class PushTranslationCommand extends Command
                 case 1:
                     $this->setIndexRecursive(
                         $fileData,
-                        $this->askPersistently($this->getTranslationQuestion($lang)),
+                        $this->ask($this->getTranslationQuestion($lang)),
                         $keys
                     );
                     break;
@@ -220,5 +228,29 @@ class PushTranslationCommand extends Command
         $this->saveCommentsAndTag($fullPath);
 
         return true;
+    }
+
+    public function choice($question, array $choices, $default = null, $attempts = null, $multiple = false) {
+        if (class_exists(\Laravel\Prompts::class) && function_exists(\Laravel\Prompts\multiselect)) {
+            return Laravel\Prompts\multiselect($question, $choices);
+        }
+        return parent::choice($question,$choices, null, null, true);
+    }
+
+    public function ask($question, $default = null) {
+        if (class_exists(\Laravel\Prompts::class) && function_exists(\Laravel\Prompts\multiselect)) {
+            return \Laravel\Prompts\text($question);
+        }
+        if (method_exists($this,'askPersistently')) {
+            return $this->askPersistently($question);
+        }
+        return parent::ask($question);
+    }
+
+    public function confirm($question, $default = true) {
+        if (function_exists(Laravel\Prompts\confirm)) {
+            return Laravel\Prompts\confirm($question, $default);
+        }
+        return parent::confirm($question, $default);
     }
 }
