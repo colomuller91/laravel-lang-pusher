@@ -49,7 +49,7 @@ class PushTranslationCommand extends Command
     public function handle()
     {
         $this->disk = Storage::build([
-            'root' => lang_path(),
+            'root' => lang_path(), //user laravel helper to get languages path
             'driver' => 'local'
         ]);
 
