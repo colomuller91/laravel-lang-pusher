@@ -71,9 +71,9 @@ class PushTranslationCommand extends Command
         $languages = $this->choice(
             'Chose in what language you want to add this key and translation', array_merge($langs, ['ALL']));
 
-//        if (array_search('ALL', $languages) !== false) {
-//            $languages = $res;
-//        }
+        if (array_search('ALL', $languages) !== false) {
+            $languages = $langs;
+        }
 
         foreach ($languages as $lang) {
 
