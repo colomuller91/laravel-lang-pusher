@@ -7,6 +7,7 @@ use Illuminate\Console\Concerns\PromptsForMissingInput;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\VarExporter\VarExporter;
 
 class PushTranslationCommand extends Command
 {
@@ -121,7 +122,7 @@ class PushTranslationCommand extends Command
             }
 
             if ($this->updated) {
-                file_put_contents($fullPath, $this->prepend.var_export($fileData,true).';');
+                file_put_contents($fullPath, $this->prepend.VarExporter::export($fileData).';');
             }
 
         }
@@ -184,8 +185,9 @@ class PushTranslationCommand extends Command
         $this->prepend = explode('return', file_get_contents($path))[0]. 'return ';
     }
 
+
     public function initializeFile(string $path) {
-        file_put_contents($path, "<?php".PHP_EOL.PHP_EOL." return ".var_export([],true).";");
+        file_put_contents($path, "<?php".PHP_EOL.PHP_EOL."return ".VarExporter::export([]).";");
     }
 
 
