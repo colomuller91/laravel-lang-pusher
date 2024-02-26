@@ -16,7 +16,9 @@ For newest version of laravel, this extension supports **new laravel prompts**, 
 
 <p align="center">
 <img align="center" src="https://i.imgur.com/V5kkp32.png" alt="image 1"></img>
+<br><br>
 <img align="center" src="https://i.imgur.com/merKyBn.png" alt="image 2"></img>
+<br><br>
 <img align="center" src="https://i.imgur.com/wODfvMj.png" alt="image 3"></img>
 </p>
 
