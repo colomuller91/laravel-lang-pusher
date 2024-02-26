@@ -218,5 +218,7 @@ class PushTranslationCommand extends Command
         }
 
         $this->saveCommentsAndTag($fullPath);
+
+        return true;
     }
 }
