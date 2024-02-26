@@ -231,14 +231,14 @@ class PushTranslationCommand extends Command
     }
 
     public function choice($question, array $choices, $default = null, $attempts = null, $multiple = false) {
-        if (class_exists(\Laravel\Prompts::class) && function_exists(\Laravel\Prompts\multiselect)) {
-            return Laravel\Prompts\multiselect($question, $choices);
+        if (class_exists(\Laravel\Prompts\MultiSelectPrompt::class)) {
+            return \Laravel\Prompts\multiselect($question, $choices);
         }
         return parent::choice($question,$choices, null, null, true);
     }
 
     public function ask($question, $default = null) {
-        if (class_exists(\Laravel\Prompts::class) && function_exists(\Laravel\Prompts\multiselect)) {
+        if (class_exists(\Laravel\Prompts\TextPrompt::class)) {
             return \Laravel\Prompts\text($question);
         }
         if (method_exists($this,'askPersistently')) {
@@ -248,8 +248,8 @@ class PushTranslationCommand extends Command
     }
 
     public function confirm($question, $default = true) {
-        if (function_exists(Laravel\Prompts\confirm)) {
-            return Laravel\Prompts\confirm($question, $default);
+        if (class_exists(\Laravel\Prompts\ConfirmPrompt::class)) {
+            return \Laravel\Prompts\confirm($question, $default);
         }
         return parent::confirm($question, $default);
     }
